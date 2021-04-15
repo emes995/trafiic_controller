@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from controller.exceptions import ControllerStoppedException
 from utils.OrderedIdGenerator import OrderedIdGenerator
 from uuid import uuid4
 from core.messages.ControllerMessage import ControllerMessage
@@ -17,7 +18,11 @@ class ControllerWatcher:
         while not self._stopped:
             await asyncio.sleep(self._sleepInterval)
             if self._controller.controllerStarted:
-                _pingMsg = ControllerMessage.fromJsonStr(self._controller.ping())
+                logging.info(f'Sending PING to {self._controller}')
+                _pingMsg = await self._controller.ping()
+                if _pingMsg.isException():
+                    raise ControllerStoppedException(_pingMsg.messagePayload.get('message'))
+                logging.info(f'{_pingMsg.messageType}')
 
         logging.info('Stopping ControllerWatcher')
 
@@ -26,24 +31,6 @@ class ControllerWatcher:
 
 
 class Controller:
-
-    class ControllerArtifact:
-        def __init__(self, sleepInterval: float = 0.75, controller=None):
-            self._stopped = False
-            self._sleepInterval = sleepInterval
-            self._controller = controller
-
-        async def start(self):
-            logging.info('Starting Controller')
-            while not self._stopped:
-                logging.info('Monitor still watching')
-                await asyncio.sleep(self._sleepInterval)
-
-            logging.info('Controller Artifact has stopped')
-
-        async def stop(self):
-            logging.info('Stopping Controller Artifact')
-            self._stopped = True
 
     def __init__(self):
         self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid4()}')
@@ -54,6 +41,10 @@ class Controller:
     @property
     def controllerStarted(self) -> bool:
         return self._started
+
+    @controllerStarted.setter
+    def controllerStarted(self, value: bool):
+        self._started = value
 
     @property
     def controllerStop(self):
@@ -71,16 +62,16 @@ class Controller:
 
     async def start(self):
         logging.info(f'Starting controller {self._id}')
-        _ctlWatcher = Controller.ControllerArtifact(controller=self)
-        self._controllerArtifactFuture = asyncio.ensure_future(_ctlWatcher.start())
-        self._controllerArtifactFuture.add_done_callback(self.stop)
+        self.controllerStarted = True
         while not self.controllerStop:
             logging.info('Controller going....')
             await asyncio.sleep(0.5)
 
-        await _ctlWatcher.stop()
         logging.info('Controller has stopped')
 
     async def stop(self):
         logging.info(f'Stopping controller {self._id}')
         self.controllerStop = True
+
+    def __str__(self):
+        return f'{type(self)}'

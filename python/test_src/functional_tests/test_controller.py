@@ -2,7 +2,7 @@ import asyncio
 import logging
 import aiounittest
 
-from controller.Controller import Controller
+from controller.Controller import Controller, ControllerWatcher
 from controller.exceptions import ControllerStoppedException
 from python.test_src.CustomTestCase import CustomTestCase
 from core.messages.ControllerMessage import ControllerMessage
@@ -31,11 +31,13 @@ class ControllerTestCase(CustomTestCase):
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
         _pingTask = asyncio.ensure_future(ControllerTestCase.ping_controller(controller=_ctl))
+        _watchCtl = asyncio.ensure_future(ControllerWatcher(sleepInterval=0.3, controller=_ctl).start())
 
         await _ctlTask
         await _stopCtlTask
         try:
             await _pingTask
+            await _watchCtl
         except Exception as e:
             logging.exception(e)
         logging.info('Test completed')
