@@ -1,0 +1,3 @@
+
+class ControllerStoppedException(RuntimeError):
+    pass
