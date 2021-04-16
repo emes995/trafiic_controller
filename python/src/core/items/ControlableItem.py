@@ -2,13 +2,17 @@ from uuid import uuid4
 from utils.OrderedIdGenerator import OrderedIdGenerator
 
 
-class ControllableItem:
+class ControlableItem:
 
     def __init__(self, controllable: bool, name: str, parentController):
         self._isControllable: bool = controllable
-        self._id = OrderedIdGenerator(f'{uuid4()}')
+        self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid4()}')
         self._name = name
         self._parentController = parentController
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def isControllable(self):

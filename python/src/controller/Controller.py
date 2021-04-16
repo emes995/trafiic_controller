@@ -1,7 +1,9 @@
 import asyncio
 import logging
 
+from controller.ControlableSpace import ControlableSpace
 from controller.exceptions import ControllerStoppedException
+from core.items.ControlableItem import ControlableItem
 from utils.OrderedIdGenerator import OrderedIdGenerator
 from uuid import uuid4
 from core.messages.ControllerMessage import ControllerMessage
@@ -13,6 +15,7 @@ class ControllerWatcher:
         self._controller = controller
         self._sleepInterval = sleepInterval
         self._stopped = False
+        self._controlableSpace = ControlableSpace(maxPopulation=10)
 
     async def start(self):
         while not self._stopped:
@@ -36,7 +39,7 @@ class Controller:
         self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid4()}')
         self._started = False
         self._stopped = False
-        self._controllerArtifactFuture = None
+        self._controlabeSpace = ControlableSpace(maxPopulation=50)
 
     @property
     def controllerStarted(self) -> bool:
@@ -60,11 +63,20 @@ class Controller:
                                      messagePayload={'message': 'Controller has already been stopped'})
         return ControllerMessage(messageType='PONG', messagePayload={})
 
+    def addControlableItem(self, controlableItem: ControlableItem):
+        self._controlabeSpace.addControllable(controlableItem=controlableItem)
+
+    def removeControlableItem(self, name: str):
+        self._controlabeSpace.removeControlableItem(name)
+
+    def getControllablePopulation(self):
+        return len(self._controlabeSpace)
+
     async def start(self):
         logging.info(f'Starting controller {self._id}')
         self.controllerStarted = True
         while not self.controllerStop:
-            logging.info('Controller going....')
+            logging.debug('Controller going....')
             await asyncio.sleep(0.5)
 
         logging.info('Controller has stopped')
