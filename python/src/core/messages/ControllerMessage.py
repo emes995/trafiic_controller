@@ -27,8 +27,8 @@ class ControllerMessage:
     def fromJsonStr(jsonStr: str):
         _msgDict = json.loads(jsonStr, object_hook=customDecodeObjectHook)
         _rootMsg = _msgDict.get('message')
-        _msg =  ControllerMessage(messageType=_rootMsg.get('type'),
-                                  messagePayload=_rootMsg.get('payload'))
+        _msg = ControllerMessage(messageType=_rootMsg.get('type'),
+                                 messagePayload=_rootMsg.get('payload'))
         return _msg
 
     def isException(self):

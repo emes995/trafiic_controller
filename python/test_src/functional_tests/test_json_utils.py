@@ -4,7 +4,7 @@ import unittest
 from utils.jsonutils import CustomEncoder, customDecodeObjectHook
 
 
-class MyTestCase(unittest.TestCase):
+class JSONUtilsTestCase(unittest.TestCase):
     def test_json_date_encode(self):
         _obj = {'date': datetime.datetime.now(),
                 'test': 'testing'
@@ -20,6 +20,7 @@ class MyTestCase(unittest.TestCase):
                 }
         _objDec = json.loads(_jsonStr, object_hook=customDecodeObjectHook)
         self.assertEqual(_obj, _objDec)
+
 
 if __name__ == '__main__':
     unittest.main()

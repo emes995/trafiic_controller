@@ -1,9 +1,9 @@
 import unittest
 
-from controller.ControlableSpace import ControlableSpace
+from controller.ControllableSpace import ControllableSpace
 from controller.Controller import Controller
-from controller.exceptions import MaxControlableSpacePopulationException
-from core.items.ControlableItem import ControlableItem
+from controller.exceptions import MaxControllableSpacePopulationException
+from core.items.ControllableItem import ControllableItem
 
 
 class ControlableSpaceTest(unittest.TestCase):
@@ -13,21 +13,21 @@ class ControlableSpaceTest(unittest.TestCase):
         self._ctl = Controller()
 
     def test_controlableSpace(self):
-        _cs = ControlableSpace(maxPopulation=10)
+        _cs = ControllableSpace(maxPopulation=10)
         for i in range(5):
-            _cs.addControllable(ControlableItem(controllable=True, name=f'name_{i}',
-                                                parentController=self._ctl))
+            _cs.addControllable(ControllableItem(controllable=True, name=f'name_{i}',
+                                                 parentController=self._ctl))
 
         self.assertEqual(len(_cs), 5)
 
     def test_controlable_exception(self):
-        _cs = ControlableSpace(maxPopulation=10)
+        _cs = ControllableSpace(maxPopulation=10)
         try:
             for i in range(11):
-                _cs.addControllable(ControlableItem(controllable=True, name=f'name_{i}',
-                                                parentController=self._ctl))
-        except MaxControlableSpacePopulationException as e:
-            self.assertEqual(MaxControlableSpacePopulationException, type(e))
+                _cs.addControllable(ControllableItem(controllable=True, name=f'name_{i}',
+                                                     parentController=self._ctl))
+        except MaxControllableSpacePopulationException as e:
+            self.assertEqual(MaxControllableSpacePopulationException, type(e))
 
 
 if __name__ == '__main__':

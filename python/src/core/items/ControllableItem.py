@@ -2,7 +2,7 @@ from uuid import uuid4
 from utils.OrderedIdGenerator import OrderedIdGenerator
 
 
-class ControlableItem:
+class ControllableItem:
 
     def __init__(self, controllable: bool, name: str, parentController):
         self._isControllable: bool = controllable
@@ -24,4 +24,3 @@ class ControlableItem:
 
     def releaseControl(self):
         self._parentController.releaseControl()
-

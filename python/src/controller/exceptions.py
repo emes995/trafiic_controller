@@ -3,5 +3,5 @@ class ControllerStoppedException(RuntimeError):
     pass
 
 
-class MaxControlableSpacePopulationException(RuntimeError):
+class MaxControllableSpacePopulationException(RuntimeError):
     pass

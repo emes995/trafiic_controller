@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-from controller.ControlableSpace import ControlableSpace
+from controller.ControllableSpace import ControllableSpace
 from controller.exceptions import ControllerStoppedException
-from core.items.ControlableItem import ControlableItem
+from core.items.ControllableItem import ControllableItem
 from utils.OrderedIdGenerator import OrderedIdGenerator
 from uuid import uuid4
 from core.messages.ControllerMessage import ControllerMessage
@@ -15,7 +15,7 @@ class ControllerWatcher:
         self._controller = controller
         self._sleepInterval = sleepInterval
         self._stopped = False
-        self._controlableSpace = ControlableSpace(maxPopulation=10)
+        self._controllableSpace = ControllableSpace(maxPopulation=10)
 
     async def start(self):
         while not self._stopped:
@@ -39,7 +39,7 @@ class Controller:
         self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid4()}')
         self._started = False
         self._stopped = False
-        self._controlabeSpace = ControlableSpace(maxPopulation=50)
+        self._controllableSpace = ControllableSpace(maxPopulation=50)
 
     @property
     def controllerStarted(self) -> bool:
@@ -63,14 +63,14 @@ class Controller:
                                      messagePayload={'message': 'Controller has already been stopped'})
         return ControllerMessage(messageType='PONG', messagePayload={})
 
-    def addControlableItem(self, controlableItem: ControlableItem):
-        self._controlabeSpace.addControllable(controlableItem=controlableItem)
+    def addControllableItem(self, controlableItem: ControllableItem):
+        self._controllableSpace.addControllable(controllableItem=controlableItem)
 
-    def removeControlableItem(self, name: str):
-        self._controlabeSpace.removeControlableItem(name)
+    def removeControllableItem(self, name: str):
+        self._controllableSpace.removeControllableItem(name)
 
     def getControllablePopulation(self):
-        return len(self._controlabeSpace)
+        return len(self._controllableSpace)
 
     async def start(self):
         logging.info(f'Starting controller {self._id}')
