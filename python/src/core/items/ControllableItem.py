@@ -1,10 +1,12 @@
 from uuid import uuid4
 from utils.OrderedIdGenerator import OrderedIdGenerator
+from core.location.ObjectLocation import ObjectLocation
 
 
 class ControllableItem:
 
-    def __init__(self, controllable: bool, name: str, parentController):
+    def __init__(self, objectLocation: ObjectLocation, controllable: bool, name: str, parentController):
+        self._objectLocation: ObjectLocation = objectLocation
         self._isControllable: bool = controllable
         self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid4()}')
         self._name = name

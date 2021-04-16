@@ -5,6 +5,7 @@ import aiounittest
 from controller.Controller import Controller, ControllerWatcher
 from controller.exceptions import MaxControllableSpacePopulationException
 from core.items.ControllableItem import ControllableItem
+from core.location.ObjectLocation import Location, ObjectLocation
 from python.test_src.CustomTestCase import CustomTestCase
 
 
@@ -12,6 +13,9 @@ class ControllerTestCase(CustomTestCase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        _latitude = Location(degree=40, minute=42, second=51, locationType=Location.LATITUDE)
+        _longitude = Location(degree=-74, minute=0, second=21, locationType=Location.LONGITUDE)
+        self._nyc = ObjectLocation(longitude=_longitude, latitude=_latitude, height=0)
 
     @staticmethod
     async def stop_controller(controller: Controller):
@@ -46,7 +50,8 @@ class ControllerTestCase(CustomTestCase):
             while True:
                 logging.info(f'Adding {howMany} items')
                 for _i in range(howMany):
-                    _ctl.addControllableItem(ControllableItem(controllable=True,
+                    _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
+                                                              controllable=True,
                                                               name=f'name_{_i}_{tries}',
                                                               parentController=_ctl))
                 tries += 1
@@ -82,7 +87,8 @@ class ControllerTestCase(CustomTestCase):
             while True:
                 logging.info(f'Adding {howMany} items')
                 for _i in range(howMany):
-                    _ctl.addControllableItem(ControllableItem(controllable=True,
+                    _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
+                                                              controllable=True,
                                                               name=f'name_{_i}_{tries}',
                                                               parentController=_ctl))
                 tries += 1

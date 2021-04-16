@@ -63,8 +63,8 @@ class Controller:
                                      messagePayload={'message': 'Controller has already been stopped'})
         return ControllerMessage(messageType='PONG', messagePayload={})
 
-    def addControllableItem(self, controlableItem: ControllableItem):
-        self._controllableSpace.addControllable(controllableItem=controlableItem)
+    def addControllableItem(self, controllableItem: ControllableItem):
+        self._controllableSpace.addControllable(controllableItem=controllableItem)
 
     def removeControllableItem(self, name: str):
         self._controllableSpace.removeControllableItem(name)
