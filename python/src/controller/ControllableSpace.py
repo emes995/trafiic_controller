@@ -1,14 +1,22 @@
 import logging
+import uuid
 
 from controller.exceptions import MaxControllableSpacePopulationException
 from core.items.ControllableItem import ControllableItem
+from utils.OrderedIdGenerator import OrderedIdGenerator
 
 
 class ControllableSpace:
 
-    def __init__(self, maxPopulation: int = -1):
+    def __init__(self, name: str, maxPopulation: int = -1):
         self._maxPopulation: int = maxPopulation
         self._population: dict = {}
+        self._id = OrderedIdGenerator.generate_ordered_id(f'{uuid.uuid4()}')
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def maxPopulation(self):
@@ -32,7 +40,7 @@ class ControllableSpace:
         assert isinstance(name, str), f'Expected str but got {type(name)}'
         try:
             _item = self._population.pop(name)
-            logging.debug(f'Removing {name} to space. Current length is {len(self)}')
+            logging.debug(f'Removing {name} from space. Current length is {len(self)}')
             return _item
         except KeyError:
             logging.error(f'Unable to find key {name}')

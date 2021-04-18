@@ -2,7 +2,9 @@ import asyncio
 import logging
 import aiounittest
 
-from controller.Controller import Controller, ControllerWatcher
+from controller.ControllableSpace import ControllableSpace
+from controller.Controller import Controller
+from controller.ControllerWatcher import ControllerWatcher
 from controller.exceptions import MaxControllableSpacePopulationException
 from core.items.ControllableItem import ControllableItem
 from core.location.ObjectLocation import Location, ObjectLocation
@@ -25,6 +27,8 @@ class ControllerTestCase(CustomTestCase):
 
     async def test_controller(self):
         _ctl = Controller()
+        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
         _watchCtl = asyncio.ensure_future(ControllerWatcher(sleepInterval=1.0, controller=_ctl).start())
@@ -41,6 +45,8 @@ class ControllerTestCase(CustomTestCase):
 
     async def test_controller_add_population(self):
         _ctl = Controller()
+        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
         _watchCtl = asyncio.ensure_future(ControllerWatcher(sleepInterval=1.0, controller=_ctl).start())
@@ -53,7 +59,9 @@ class ControllerTestCase(CustomTestCase):
                     _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
                                                               controllable=True,
                                                               name=f'name_{_i}_{tries}',
-                                                              parentController=_ctl))
+                                                              parentController=_ctl,
+                                                              ),
+                                             ctlSpace=_ctlSpace.name)
                 tries += 1
                 await asyncio.sleep(1.0)
 
@@ -73,11 +81,13 @@ class ControllerTestCase(CustomTestCase):
 
         logging.info('Test completed')
 
-        self.assertEqual(50, _ctl.getControllablePopulation())
+        self.assertEqual(50, _ctl.getControllablePopulation('test'))
         self.assertEqual(_ctl.controllerStop, True)
 
     async def test_controller_remove_population(self):
         _ctl = Controller()
+        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
         _watchCtl = asyncio.ensure_future(ControllerWatcher(sleepInterval=1.0, controller=_ctl).start())
@@ -90,7 +100,10 @@ class ControllerTestCase(CustomTestCase):
                     _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
                                                               controllable=True,
                                                               name=f'name_{_i}_{tries}',
-                                                              parentController=_ctl))
+                                                              parentController=_ctl),
+                                             ctlSpace=_ctlSpace.name
+                                             )
+                    await asyncio.sleep(0.2)
                 tries += 1
                 await asyncio.sleep(1.0)
 
@@ -100,7 +113,7 @@ class ControllerTestCase(CustomTestCase):
             await asyncio.sleep(5.0)
             logging.info(f'Removing {howMany} items')
             for _i in range(howMany):
-                _ctl.removeControllableItem(name=f'name_{_i}_{tries}')
+                _ctl.removeControllableItem(name=f'name_{_i}_{tries}', ctlSpace='test')
             await asyncio.sleep(3.0)
 
         _addCtlTask = asyncio.ensure_future(addControllableItems())
@@ -125,7 +138,7 @@ class ControllerTestCase(CustomTestCase):
 
         logging.info('Test completed')
 
-        self.assertEqual(50, _ctl.getControllablePopulation())
+        self.assertEqual(50, _ctl.getControllablePopulation('test'))
         self.assertEqual(_ctl.controllerStop, True)
 
 
