@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from controller.ControllableSpace import ControllableSpace
-from core.items.ControllableItem import ControllableItem
+from controller.TrackableSpace import TrackableSpace
+from core.items.TrackableItem import TrackableItem
 from utils.OrderedIdGenerator import OrderedIdGenerator
 from uuid import uuid4
 from core.messages.ControllerMessage import ControllerMessage
@@ -32,7 +32,7 @@ class Controller:
     def controllerStop(self, value: bool):
         self._stopped = value
 
-    def addControllableSpace(self, ctlSpace: ControllableSpace):
+    def addControllableSpace(self, ctlSpace: TrackableSpace):
         self._controllableSpaces[ctlSpace.name] = ctlSpace
 
     async def ping(self) -> ControllerMessage:
@@ -41,7 +41,7 @@ class Controller:
                                      messagePayload={'message': 'Controller has already been stopped'})
         return ControllerMessage(messageType='PONG', messagePayload={})
 
-    def addControllableItem(self, controllableItem: ControllableItem, ctlSpace: str):
+    def addControllableItem(self, controllableItem: TrackableItem, ctlSpace: str):
         _ctlSpace = self._controllableSpaces.get(ctlSpace)
         _ctlSpace.addControllable(controllableItem=controllableItem)
 
@@ -58,7 +58,7 @@ class Controller:
         self.controllerStarted = True
         while not self.controllerStop:
             for _k, _v in self._controllableSpaces.items():
-                _cs: ControllableSpace = _v
+                _cs: TrackableSpace = _v
                 logging.debug(f'ControllableSpace {_k} has {len(_cs)}')
             await asyncio.sleep(0.1)
 

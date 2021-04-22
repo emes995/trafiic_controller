@@ -3,7 +3,7 @@ from utils.OrderedIdGenerator import OrderedIdGenerator
 from core.location.ObjectLocation import ObjectLocation
 
 
-class ControllableItem:
+class TrackableItem:
 
     def __init__(self, objectLocation: ObjectLocation, controllable: bool, name: str, parentController):
         self._objectLocation: ObjectLocation = objectLocation

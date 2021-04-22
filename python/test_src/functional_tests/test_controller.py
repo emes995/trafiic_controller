@@ -2,11 +2,11 @@ import asyncio
 import logging
 import aiounittest
 
-from controller.ControllableSpace import ControllableSpace
+from controller.TrackableSpace import TrackableSpace
 from controller.Controller import Controller
 from controller.ControllerWatcher import ControllerWatcher
-from controller.exceptions import MaxControllableSpacePopulationException
-from core.items.ControllableItem import ControllableItem
+from controller.exceptions import MaxTrackableSpacePopulationException
+from core.items.TrackableItem import TrackableItem
 from core.location.ObjectLocation import Location, ObjectLocation
 from python.test_src.CustomTestCase import CustomTestCase
 
@@ -27,7 +27,7 @@ class ControllerTestCase(CustomTestCase):
 
     async def test_controller(self):
         _ctl = Controller()
-        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctlSpace = TrackableSpace(name='test', maxPopulation=50)
         _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
@@ -45,7 +45,7 @@ class ControllerTestCase(CustomTestCase):
 
     async def test_controller_add_population(self):
         _ctl = Controller()
-        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctlSpace = TrackableSpace(name='test', maxPopulation=50)
         _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
@@ -56,11 +56,11 @@ class ControllerTestCase(CustomTestCase):
             while True:
                 logging.info(f'Adding {howMany} items')
                 for _i in range(howMany):
-                    _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
-                                                              controllable=True,
-                                                              name=f'name_{_i}_{tries}',
-                                                              parentController=_ctl,
-                                                              ),
+                    _ctl.addControllableItem(TrackableItem(objectLocation=self._nyc,
+                                                           controllable=True,
+                                                           name=f'name_{_i}_{tries}',
+                                                           parentController=_ctl,
+                                                           ),
                                              ctlSpace=_ctlSpace.name)
                 tries += 1
                 await asyncio.sleep(1.0)
@@ -76,7 +76,7 @@ class ControllerTestCase(CustomTestCase):
 
         try:
             await _addCtlTask
-        except MaxControllableSpacePopulationException as e:
+        except MaxTrackableSpacePopulationException as e:
             logging.exception(e)
 
         logging.info('Test completed')
@@ -86,7 +86,7 @@ class ControllerTestCase(CustomTestCase):
 
     async def test_controller_remove_population(self):
         _ctl = Controller()
-        _ctlSpace = ControllableSpace(name='test', maxPopulation=50)
+        _ctlSpace = TrackableSpace(name='test', maxPopulation=50)
         _ctl.addControllableSpace(_ctlSpace)
         _ctlTask = asyncio.ensure_future(_ctl.start())
         _stopCtlTask = asyncio.ensure_future(ControllerTestCase.stop_controller(controller=_ctl))
@@ -97,10 +97,10 @@ class ControllerTestCase(CustomTestCase):
             while True:
                 logging.info(f'Adding {howMany} items')
                 for _i in range(howMany):
-                    _ctl.addControllableItem(ControllableItem(objectLocation=self._nyc,
-                                                              controllable=True,
-                                                              name=f'name_{_i}_{tries}',
-                                                              parentController=_ctl),
+                    _ctl.addControllableItem(TrackableItem(objectLocation=self._nyc,
+                                                           controllable=True,
+                                                           name=f'name_{_i}_{tries}',
+                                                           parentController=_ctl),
                                              ctlSpace=_ctlSpace.name
                                              )
                     await asyncio.sleep(0.2)
@@ -128,7 +128,7 @@ class ControllerTestCase(CustomTestCase):
 
         try:
             await _addCtlTask
-        except MaxControllableSpacePopulationException as e:
+        except MaxTrackableSpacePopulationException as e:
             logging.exception(e)
 
         try:
